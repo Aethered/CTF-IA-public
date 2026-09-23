@@ -1,0 +1,147 @@
+services:
+
+  # --------------------------------------------------
+  # Service LLM partage (llama.cpp)
+  # --------------------------------------------------
+  llm:
+    image: ghcr.io/ggml-org/llama.cpp:server
+    container_name: ctf-llm
+    command:
+      - "-m"
+      - "/models/${MODEL_FILE:-qwen2.5-3b-instruct-q4_k_m.gguf}"
+      - "--host"
+      - "0.0.0.0"
+      - "--port"
+      - "8080"
+      - "--ctx-size"
+      - "2048"
+      - "--threads"
+      - "${LLM_THREADS:-4}"
+    volumes:
+      - ./models:/models:ro
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+  # --------------------------------------------------
+  # Challenges IA (avec LLM)
+  # --------------------------------------------------
+  challenge_01:
+    image: ghcr.io/aethered/ctf-ia/challenge_01:latest
+    container_name: ctf-ch-01
+    ports:
+      - "8000:8000"
+    environment:
+      LLM_URL: "http://llm:8080/v1/chat/completions"
+    depends_on:
+      - llm
+
+  challenge_02:
+    image: ghcr.io/aethered/ctf-ia/challenge_02:latest
+    container_name: ctf-ch-02
+    ports:
+      - "8000:8000"
+    environment:
+      LLM_URL: "http://llm:8080/v1/chat/completions"
+    depends_on:
+      - llm
+
+  challenge_03:
+    image: ghcr.io/aethered/ctf-ia/challenge_03:latest
+    container_name: ctf-ch-03
+    ports:
+      - "8000:8000"
+
+  challenge_04:
+    image: ghcr.io/aethered/ctf-ia/challenge_04:latest
+    container_name: ctf-ch-04
+    ports:
+      - "8000:8000"
+    environment:
+      LLM_URL: "http://llm:8080/v1/chat/completions"
+    depends_on:
+      - llm
+
+  challenge_05:
+    image: ghcr.io/aethered/ctf-ia/challenge_05:latest
+    container_name: ctf-ch-05
+    ports:
+      - "8000:8000"
+    environment:
+      LLM_URL: "http://llm:8080/v1/chat/completions"
+    depends_on:
+      - llm
+
+  challenge_06:
+    image: ghcr.io/aethered/ctf-ia/challenge_06:latest
+    container_name: ctf-ch-06
+    ports:
+      - "8000:8000"
+
+  challenge_07:
+    image: ghcr.io/aethered/ctf-ia/challenge_07:latest
+    container_name: ctf-ch-07
+    ports:
+      - "8000:8000"
+    environment:
+      LLM_URL: "http://llm:8080/v1/chat/completions"
+    depends_on:
+      - llm
+
+  challenge_08:
+    image: ghcr.io/aethered/ctf-ia/challenge_08:latest
+    container_name: ctf-ch-08
+    ports:
+      - "8000:8000"
+    environment:
+      LLM_URL: "http://llm:8080/v1/chat/completions"
+    depends_on:
+      - llm
+
+  challenge_09:
+    image: ghcr.io/aethered/ctf-ia/challenge_09:latest
+    container_name: ctf-ch-09
+    ports:
+      - "8000:8000"
+    environment:
+      LLM_URL: "http://llm:8080/v1/chat/completions"
+    depends_on:
+      - llm
+
+  # --------------------------------------------------
+  # Challenges Web Classiques (sans LLM)
+  # --------------------------------------------------
+  challenge_10:
+    image: ghcr.io/aethered/ctf-ia/challenge_10:latest
+    container_name: ctf-ch-10
+    ports:
+      - "8000:8000"
+
+  challenge_11:
+    image: ghcr.io/aethered/ctf-ia/challenge_11:latest
+    container_name: ctf-ch-11
+    ports:
+      - "8000:8000"
+
+  challenge_12:
+    image: ghcr.io/aethered/ctf-ia/challenge_12:latest
+    container_name: ctf-ch-12
+    ports:
+      - "8000:8000"
+
+  challenge_13:
+    image: ghcr.io/aethered/ctf-ia/challenge_13:latest
+    container_name: ctf-ch-13
+    ports:
+      - "8000:8000"
+
+  challenge_14:
+    image: ghcr.io/aethered/ctf-ia/challenge_14:latest
+    container_name: ctf-ch-14
+    ports:
+      - "8000:8000"
+
+networks:
+  default:
+    name: ctf-network
+

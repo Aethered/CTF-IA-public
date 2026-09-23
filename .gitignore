@@ -1,0 +1,8 @@
+solve/*
+*.gguf
+models/*
+!models/.gitkeep
+.env
+__pycache__/
+*.pyc
+.progress
