@@ -41,20 +41,37 @@ C_GRAY=$'\033[90m'
 
 # Liste des 14 challenges
 declare -A CH_NAMES
-CH_NAMES["01"]="Prompt Injection Directe (Sentinel)"
-CH_NAMES["02"]="RAG Access Control Bypass (KnowledgeBot)"
-CH_NAMES["03"]="Machine Learning Evasion (MailGuard)"
-CH_NAMES["04"]="Indirect Prompt Injection (KnowledgeBot)"
-CH_NAMES["05"]="OpsAgent - Insecure Tool Execution"
-CH_NAMES["06"]="Data Poisoning (PhishLearn)"
-CH_NAMES["07"]="LLM-as-a-judge Jailbreak (AutoGrader)"
-CH_NAMES["08"]="Agent IDOR / BOLA (HelpDesk)"
-CH_NAMES["09"]="Full AI Kill-Chain (OpsAssistant)"
-CH_NAMES["10"]="Web Basics (Source, Headers, Cookies)"
-CH_NAMES["11"]="Web - IDOR (Invoices)"
-CH_NAMES["12"]="Web - Client-side Tampering"
-CH_NAMES["13"]="Web - Path Traversal (DocServer)"
-CH_NAMES["14"]="Web - Command Injection (PingDiag)"
+CH_NAMES["01"]="Sentinel (Assistant de securite)"
+CH_NAMES["02"]="KnowledgeBot (Base documentaire)"
+CH_NAMES["03"]="MailGuard (Filtre de messagerie)"
+CH_NAMES["04"]="KnowledgeBot v2 (Base collaborative)"
+CH_NAMES["05"]="OpsAgent (Gestionnaire d'incidents)"
+CH_NAMES["06"]="PhishLearn (Detecteur adaptatif)"
+CH_NAMES["07"]="AutoGrader (Plateforme d'evaluation)"
+CH_NAMES["08"]="HelpDesk (Annuaire d'entreprise)"
+CH_NAMES["09"]="OpsAssistant (Centre d'operations)"
+CH_NAMES["10"]="Web Portal (Portail d'entreprise)"
+CH_NAMES["11"]="Invoices (Portail de facturation)"
+CH_NAMES["12"]="Intranet (Espace collaboratif)"
+CH_NAMES["13"]="DocServer (Serveur documentaire)"
+CH_NAMES["14"]="NetTools (Diagnostic reseau)"
+
+# Briefing d'audit et objectif pour chaque challenge (sans divulgation de solution)
+declare -A CH_MISSIONS
+CH_MISSIONS["01"]="Extraire la cle secrete de validation confiee a l'assistant lors de son initialisation."
+CH_MISSIONS["02"]="Acceder aux informations confidentielles du plan de continuite d'activite de l'entreprise."
+CH_MISSIONS["03"]="Adapter l'email fourni pour qu'il soit classe comme legitime tout en respectant les contraintes."
+CH_MISSIONS["04"]="Tirer parti des fonctionnalites de la plateforme pour extraire la cle de configuration de l'assistant."
+CH_MISSIONS["05"]="Interagir avec l'assistant afin de recuperer le secret de restauration d'identite du serveur."
+CH_MISSIONS["06"]="Utiliser vos contributions pour faire reclasser l'email de test actuellement bloque comme legitime."
+CH_MISSIONS["07"]="Soumettre une reponse a l'exercice permettant d'obtenir la note maximale de 10/10."
+CH_MISSIONS["08"]="Utiliser l'assistant pour acceder aux informations confidentielles d'un compte de direction."
+CH_MISSIONS["09"]="Retrouver l'ensemble des 3 fragments de secours et soumettre la cle reconstituee."
+CH_MISSIONS["10"]="Examiner les elements exposes publiquement par l'application pour retrouver le jeton de validation."
+CH_MISSIONS["11"]="Retrouver et consulter une facture confidentielle appartenant a un autre compte de l'organisation."
+CH_MISSIONS["12"]="Acceder a la zone d'administration restreinte de la plateforme pour en reveler le contenu."
+CH_MISSIONS["13"]="Recuperer le fichier de configuration confidentiel conserve dans l'espace prive du serveur."
+CH_MISSIONS["14"]="Demontrer la possibilite de lire les donnees confidentielles hebergees sur le serveur d'execution."
 
 # Suivi de progression locale
 PROGRESS_FILE="$DIR/.progress"
@@ -269,6 +286,25 @@ EOF
     fi
 }
 
+# Affichage du briefing de mission d'un challenge
+show_challenge_info() {
+    local num="$1"
+    if [[ "$num" =~ ^[1-9]$ ]]; then
+        num="0$num"
+    fi
+
+    if [ -z "${CH_NAMES[$num]}" ]; then
+        echo -e "${C_RED}[ERREUR] Challenge '$num' inconnu (valeurs valides : 01 a 14).${C_RESET}"
+        return 1
+    fi
+
+    echo -e "\n${C_BOLD}------------------------------------------------------------${C_RESET}"
+    echo -e " ${C_BOLD}Challenge $num : ${CH_NAMES[$num]}${C_RESET}"
+    echo -e " URL     : ${C_BOLD}${C_CYAN}http://localhost:8000${C_RESET}"
+    echo -e " Mission : ${CH_MISSIONS[$num]}"
+    echo -e "${C_BOLD}------------------------------------------------------------${C_RESET}\n"
+}
+
 # Lancement d'un challenge
 start_challenge() {
     local num="$1"
@@ -292,6 +328,7 @@ start_challenge() {
     current=$(get_active_challenge)
     if [ "$current" = "$num" ]; then
         echo -e "${C_GREEN}[OK] Le Challenge $num est deja en cours d'execution sur http://localhost:8000${C_RESET}"
+        echo -e "Mission : ${CH_MISSIONS[$num]}"
         return 0
     fi
 
@@ -316,8 +353,9 @@ start_challenge() {
     MODEL_FILE="$MODEL_FILE" LLM_THREADS="$LLM_THREADS" docker compose up -d "$service"
 
     echo -e "\n${C_GREEN}------------------------------------------------------------${C_RESET}"
-    echo -e " ${C_BOLD}${C_GREEN}[OK] Challenge $num demarre${C_RESET}"
-    echo -e " URL : ${C_BOLD}${C_CYAN}http://localhost:8000${C_RESET}"
+    echo -e " ${C_BOLD}${C_GREEN}[OK] Challenge $num demarre : ${CH_NAMES[$num]}${C_RESET}"
+    echo -e " URL     : ${C_BOLD}${C_CYAN}http://localhost:8000${C_RESET}"
+    echo -e " Mission : ${CH_MISSIONS[$num]}"
     echo -e "${C_GREEN}------------------------------------------------------------${C_RESET}\n"
 }
 
@@ -545,15 +583,21 @@ interactive_menu() {
         echo -e "------------------------------------------------------------"
         echo -e "Actions :"
         echo -e "  [v] Valider un flag                [s] Arreter le challenge actif"
-        echo -e "  [S] Tout arreter (avec LLM)        [m] Changer de modele (3B / 1.5B)"
-        echo -e "  [d] Telecharger un modele          [t] Tester la reponse du LLM"
-        echo -e "  [l] Consulter les logs             [q] Quitter"
+        echo -e "  [i] Consulter la mission           [m] Changer de modele (3B / 1.5B)"
+        echo -e "  [S] Tout arreter (avec LLM)        [d] Telecharger un modele"
+        echo -e "  [t] Tester la reponse du LLM       [l] Consulter les logs"
+        echo -e "  [q] Quitter"
         echo -e "------------------------------------------------------------"
         read -rp "Commande [01-14 ou action] : " opt
 
         case "$opt" in
             01|02|03|04|05|06|07|08|09|10|11|12|13|14|1|2|3|4|5|6|7|8|9)
                 start_challenge "$opt"
+                read -rp "Appuyez sur [Entree] pour continuer..."
+                ;;
+            i|info|mission)
+                read -rp "Numero du challenge (01-14) : " ch_info
+                show_challenge_info "$ch_info"
                 read -rp "Appuyez sur [Entree] pour continuer..."
                 ;;
             v|valider|flag)
@@ -603,6 +647,13 @@ case "$1" in
         fi
         start_challenge "$2"
         ;;
+    info|mission)
+        if [ -z "$2" ]; then
+            echo -e "Usage: ./ctf.sh info <01-14>"
+            exit 1
+        fi
+        show_challenge_info "$2"
+        ;;
     stop)
         if [ "$2" = "all" ]; then
             stop_all
@@ -632,7 +683,7 @@ case "$1" in
         interactive_menu
         ;;
     *)
-        echo -e "Usage: ./ctf.sh [start <01-14> | stop [all] | flag [<ch>] [<flag>] | score | download [3b|1.5b] | model | test | logs]"
+        echo -e "Usage: ./ctf.sh [start <01-14> | info <01-14> | stop [all] | flag [<ch>] [<flag>] | score | download [3b|1.5b] | model | test | logs]"
         exit 1
         ;;
 esac

@@ -44,20 +44,38 @@ $File15B = "qwen2.5-1.5b-instruct-q4_k_m.gguf"
 
 # 14 challenges
 $ChNames = [ordered]@{
-    "01" = "Prompt Injection Directe (Sentinel)"
-    "02" = "RAG Access Control Bypass (KnowledgeBot)"
-    "03" = "Machine Learning Evasion (MailGuard)"
-    "04" = "Indirect Prompt Injection (KnowledgeBot)"
-    "05" = "OpsAgent - Insecure Tool Execution"
-    "06" = "Data Poisoning (PhishLearn)"
-    "07" = "LLM-as-a-judge Jailbreak (AutoGrader)"
-    "08" = "Agent IDOR / BOLA (HelpDesk)"
-    "09" = "Full AI Kill-Chain (OpsAssistant)"
-    "10" = "Web Basics (Source, Headers, Cookies)"
-    "11" = "Web - IDOR (Invoices)"
-    "12" = "Web - Client-side Tampering"
-    "13" = "Web - Path Traversal (DocServer)"
-    "14" = "Web - Command Injection (PingDiag)"
+    "01" = "Sentinel (Assistant de securite)"
+    "02" = "KnowledgeBot (Base documentaire)"
+    "03" = "MailGuard (Filtre de messagerie)"
+    "04" = "KnowledgeBot v2 (Base collaborative)"
+    "05" = "OpsAgent (Gestionnaire d'incidents)"
+    "06" = "PhishLearn (Detecteur adaptatif)"
+    "07" = "AutoGrader (Plateforme d'evaluation)"
+    "08" = "HelpDesk (Annuaire d'entreprise)"
+    "09" = "OpsAssistant (Centre d'operations)"
+    "10" = "Web Portal (Portail d'entreprise)"
+    "11" = "Invoices (Portail de facturation)"
+    "12" = "Intranet (Espace collaboratif)"
+    "13" = "DocServer (Serveur documentaire)"
+    "14" = "NetTools (Diagnostic reseau)"
+}
+
+# Briefings d'audit et objectifs par challenge (sans divulgation de solution)
+$ChMissions = [ordered]@{
+    "01" = "Extraire la cle secrete de validation confiee a l'assistant lors de son initialisation."
+    "02" = "Acceder aux informations confidentielles du plan de continuite d'activite de l'entreprise."
+    "03" = "Adapter l'email fourni pour qu'il soit classe comme legitime tout en respectant les contraintes."
+    "04" = "Tirer parti des fonctionnalites de la plateforme pour extraire la cle de configuration de l'assistant."
+    "05" = "Interagir avec l'assistant afin de recuperer le secret de restauration d'identite du serveur."
+    "06" = "Utiliser vos contributions pour faire reclasser l'email de test actuellement bloque comme legitime."
+    "07" = "Soumettre une reponse a l'exercice permettant d'obtenir la note maximale de 10/10."
+    "08" = "Utiliser l'assistant pour acceder aux informations confidentielles d'un compte de direction."
+    "09" = "Retrouver l'ensemble des 3 fragments de secours et soumettre la cle reconstituee."
+    "10" = "Examiner les elements exposes publiquement par l'application pour retrouver le jeton de validation."
+    "11" = "Retrouver et consulter une facture confidentielle appartenant a un autre compte de l'organisation."
+    "12" = "Acceder a la zone d'administration restreinte de la plateforme pour en reveler le contenu."
+    "13" = "Recuperer le fichier de configuration confidentiel conserve dans l'espace prive du serveur."
+    "14" = "Demontrer la possibilite de lire les donnees confidentielles hebergees sur le serveur d'execution."
 }
 
 # Hashes SHA-256 des flags
@@ -185,11 +203,24 @@ function Start-Llm {
     return (Wait-ForLlm)
 }
 
+function Show-ChallengeInfo([string]$num) {
+    if ($num -match '^[1-9]$') { $num = "0$num" }
+    if (-not $ChNames.Contains($num)) {
+        Write-Host "[ERREUR] Challenge '$num' inconnu (valeurs valides : 01 a 14)." -ForegroundColor Red
+        return
+    }
+    Write-Host "`n------------------------------------------------------------" -ForegroundColor White
+    Write-Host " Challenge $num : $($ChNames[$num])" -ForegroundColor Cyan
+    Write-Host " URL     : http://localhost:8000" -ForegroundColor Cyan
+    Write-Host " Mission : $($ChMissions[$num])" -ForegroundColor White
+    Write-Host "------------------------------------------------------------`n" -ForegroundColor White
+}
+
 function Start-Challenge([string]$num) {
     Test-DockerRunning
     if ($num -match '^[1-9]$') { $num = "0$num" }
     
-    if (-not $ChNames.ContainsKey($num)) {
+    if (-not $ChNames.Contains($num)) {
         Write-Host "[ERREUR] Challenge '$num' inconnu (valeurs valides : 01 a 14)." -ForegroundColor Red
         return
     }
@@ -201,6 +232,7 @@ function Start-Challenge([string]$num) {
     $current = Get-ActiveChallenge
     if ($current -eq $num) {
         Write-Host "[OK] Le Challenge $num est deja en cours d'execution sur http://localhost:8000" -ForegroundColor Green
+        Write-Host "Mission : $($ChMissions[$num])" -ForegroundColor White
         return
     }
 
@@ -227,8 +259,9 @@ function Start-Challenge([string]$num) {
     docker compose up -d "challenge_$num"
 
     Write-Host "`n------------------------------------------------------------" -ForegroundColor Green
-    Write-Host " [OK] Challenge $num demarre" -ForegroundColor Green
-    Write-Host " URL : http://localhost:8000" -ForegroundColor Cyan
+    Write-Host " [OK] Challenge $num demarre : $($ChNames[$num])" -ForegroundColor Green
+    Write-Host " URL     : http://localhost:8000" -ForegroundColor Cyan
+    Write-Host " Mission : $($ChMissions[$num])" -ForegroundColor White
     Write-Host "------------------------------------------------------------`n" -ForegroundColor Green
 }
 
@@ -263,7 +296,7 @@ function Validate-Flag([string]$ch, [string]$flag) {
 
     if ($ch -match '^[1-9]$') { $ch = "0$ch" }
 
-    if (-not $ChNames.ContainsKey($ch)) {
+    if (-not $ChNames.Contains($ch)) {
         Write-Host "[ERREUR] Challenge '$ch' invalide (01 a 14)." -ForegroundColor Red
         return
     }
@@ -500,6 +533,7 @@ function Show-Menu {
 
     Write-Host "`n[ACTIONS GLOBALES]" -ForegroundColor White
     Write-Host "    [f] Valider un flag"
+    Write-Host "    [i] Briefing de mission"
     Write-Host "    [s] Arreter le challenge actif"
     Write-Host "    [S] Arreter TOUT (challenge + LLM)"
     Write-Host "    [m] Changer de modele LLM"
@@ -513,6 +547,12 @@ function Show-Menu {
     switch ($choice) {
         "q" { exit 0 }
         "f" { Validate-Flag; break }
+        "i" {
+            $ch = Read-Host "Numero du challenge (01-14)"
+            Show-ChallengeInfo $ch
+            Read-Host "Appuyez sur Entree pour continuer..."
+            break
+        }
         "s" { Stop-ActiveChallenge; break }
         "S" { Stop-All; break }
         "m" { Configure-Model; break }
@@ -530,6 +570,8 @@ function Show-Menu {
 # --- Point d'entree CLI ---
 switch ($Command) {
     "start"    { Start-Challenge $Arg1 }
+    "info"     { Show-ChallengeInfo $Arg1 }
+    "mission"  { Show-ChallengeInfo $Arg1 }
     "stop"     { if ($Arg1 -eq "all") { Stop-All } else { Stop-ActiveChallenge } }
     "flag"     { Validate-Flag $Arg1 $Arg2 }
     "score"    { Show-Score }

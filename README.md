@@ -34,6 +34,7 @@ Le script controle automatiquement la presence de Docker Desktop et guide son in
 Les memes sous-commandes sont disponibles sous Linux (`./ctf.sh <commande>`) et sous Windows (`.\ctf.bat <commande>`) :
 
 - `start <01-14>` : Coupe le challenge precedent, demarre le LLM si necessaire, et lance le challenge selectionne sur `http://localhost:8000`.
+- `info <01-14>` : Affiche le briefing de mission et l'objectif d'audit du challenge selectionne.
 - `flag [<01-14>] [<flag>]` : Valide un flag trouve (directement pour le challenge actif ou en precisant le numero) et enregistre la progression.
 - `score` : Affiche l'etat d'avancement et la liste des challenges resolus.
 - `stop` : Arrete le challenge actif.
@@ -58,27 +59,73 @@ Les memes sous-commandes sont disponibles sous Linux (`./ctf.sh <commande>`) et 
 
 ---
 
-## Liste des challenges
+## Missions et Scenarios d'audit
 
-### Securite LLM (OWASP LLM Top 10)
-- **Challenge 01 - Sentinel :** Direct Prompt Injection et contournement de filtre applicatif.
-- **Challenge 02 - KnowledgeBot :** RAG Access Control Bypass (fuite documentaire via absence de controle d'acces sur le retriever).
-- **Challenge 04 - KnowledgeBot v2 :** Indirect Prompt Injection via empoisonnement documentaire.
-- **Challenge 05 - OpsAgent :** Insecure Tool Execution et elevation de privileges.
-- **Challenge 07 - AutoGrader :** LLM-as-a-judge Jailbreak (manipulation d'un evaluateur automatique).
-- **Challenge 08 - HelpDesk :** BOLA / IDOR applique aux outils d'un agent.
-- **Challenge 09 - OpsAssistant :** Chaine d'attaque combinant RAG, IDOR et injection indirecte.
+Dans le cadre de ce CTF, vous intervenez en tant qu'auditeur de securite mandate par l'entreprise fictive **CyberCorp**.
+Chaque epreuve simule un service applicatif specifique dont vous devez evaluer la robustesse.
+Chaque reussite permet de decouvrir un secret de validation a soumettre au format : `FLAG{...}`.
 
-### Machine Learning classique (Adversarial ML)
-- **Challenge 03 - MailGuard :** ML Evasion (perturbation adverse sur modele de classification sans LLM).
-- **Challenge 06 - PhishLearn :** Data Poisoning (empoisonnement du jeu d'entrainement).
+### Securite des Modeles de Langage (LLM)
+
+- **Challenge 01 - Sentinel (Assistant de securite) :**
+  - *Mise en situation :* CyberCorp a deploye un assistant conversationnel pour repondre aux questions des collaborateurs sur les regles de securite internes. Une cle de validation interne a ete confiee au systeme lors de son initialisation.
+  - *Objectif d'audit :* Interagir avec l'assistant afin d'extraire la cle secrete de validation.
+
+- **Challenge 02 - KnowledgeBot (Base documentaire) :**
+  - *Mise en situation :* Vous disposez d'un compte collaborateur standard (`employee@cybercorp.local`) connecte a l'assistant documentaire de l'entreprise. Cet outil permet d'interroger les notices usuelles (teletravail, VPN...).
+  - *Objectif d'audit :* Utiliser l'assistant pour acceder aux informations confidentielles relatives au plan de continuite d'activite de l'entreprise.
+
+- **Challenge 04 - KnowledgeBot v2 (Base collaborative) :**
+  - *Mise en situation :* La nouvelle version de l'assistant documentaire permet aux collaborateurs de soumettre de nouvelles documentations techniques afin d'enrichir la base de connaissances.
+  - *Objectif d'audit :* Tirer parti des fonctionnalites de la plateforme pour extraire la cle de configuration confidentielle de l'assistant.
+
+- **Challenge 05 - OpsAgent (Gestionnaire d'incidents) :**
+  - *Mise en situation :* L'equipe des operations techniques utilise OpsAgent pour suivre et analyser les incidents d'infrastructure. L'assistant dispose d'outils d'automatisation pour accomplir ses taches.
+  - *Objectif d'audit :* Interagir avec l'assistant afin de recuperer le secret de restauration d'identite heberge sur le serveur d'infrastructure.
+
+- **Challenge 07 - AutoGrader (Plateforme d'evaluation) :**
+  - *Mise en situation :* La plateforme de formation interne de CyberCorp soumet les candidats a une evaluation dont la correction est integralement deleguee a un module automatise.
+  - *Objectif d'audit :* Soumettre une reponse a l'exercice permettant d'obtenir la note maximale de 10/10 afin de decrocher la validation.
+
+- **Challenge 08 - HelpDesk (Annuaire d'entreprise) :**
+  - *Mise en situation :* Vous etes connecte en tant qu'employe standard (Alex Martin, identifiant 1001) sur le portail d'assistance interne pour consulter l'annuaire d'entreprise.
+  - *Objectif d'audit :* Utiliser l'assistant pour acceder aux informations confidentielles associees au profil d'un compte de direction.
+
+- **Challenge 09 - OpsAssistant (Centre d'operations) :**
+  - *Mise en situation :* En cas d'incident critique, la plateforme d'intervention d'urgence requiert une cle de deverrouillage de secours. Pour des motifs de resilience, cette cle a ete scindee en trois fragments distincts repartis au sein du systeme.
+  - *Objectif d'audit :* Retrouver l'ensemble des 3 fragments de secours et soumettre la cle reconstituee au format demande (`FRAG1-FRAG2-FRAG3`).
+
+### Machine Learning classique
+
+- **Challenge 03 - MailGuard (Filtre de messagerie) :**
+  - *Mise en situation :* La messagerie d'entreprise est protegee par un filtre d'analyse automatise charge d'intercepter les courriels suspects avant leur distribution.
+  - *Objectif d'audit :* Adapter l'email suspect fourni afin que le filtre l'analyse comme legitime, tout en conservant son contenu et en respectant les contraintes imposees par l'interface.
+
+- **Challenge 06 - PhishLearn (Detecteur adaptatif) :**
+  - *Mise en situation :* Le systeme de detection de CyberCorp s'appuie sur un mecanisme d'apprentissage collaboratif : chaque echantillon soumis par les collaborateurs est integre pour actualiser le moteur de detection.
+  - *Objectif d'audit :* Utiliser vos quotas de contribution pour faire en sorte que l'email de test actuellement bloque par le detecteur soit reclasse comme legitime.
 
 ### Securite Web
-- **Challenge 10 - Web Basics :** Reconnaissance (code source, en-tetes, cookies, robots.txt).
-- **Challenge 11 - Invoices :** IDOR (Broken Object Level Authorization).
-- **Challenge 12 - Tampering :** Manipulation de donnees et de roles cote client.
-- **Challenge 13 - DocServer :** Path Traversal / LFI.
-- **Challenge 14 - PingDiag :** Injection de commande systeme (RCE).
+
+- **Challenge 10 - Web Portal (Portail d'entreprise) :**
+  - *Mise en situation :* CyberCorp vient de mettre en ligne son nouveau site web institutionnel.
+  - *Objectif d'audit :* Examiner l'ensemble des elements exposes publiquement par l'application web pour retrouver les fragments du jeton de validation interne.
+
+- **Challenge 11 - Invoices (Portail de facturation) :**
+  - *Mise en situation :* Vous etes connecte sur l'espace de facturation de l'entreprise pour consulter vos propres factures.
+  - *Objectif d'audit :* Retrouver et consulter une facture confidentielle appartenant a un autre compte de l'organisation.
+
+- **Challenge 12 - Intranet (Espace collaboratif) :**
+  - *Mise en situation :* Vous disposez d'un acces visiteur standard sur l'intranet collaboratif de CyberCorp.
+  - *Objectif d'audit :* Acceder a la zone d'administration restreinte de la plateforme pour en reveler le contenu.
+
+- **Challenge 13 - DocServer (Serveur documentaire) :**
+  - *Mise en situation :* Le serveur de documentation de l'entreprise permet de visualiser les guides et manuels publics mis a disposition des equipes.
+  - *Objectif d'audit :* Recuperer le fichier de configuration confidentiel conserve dans l'espace prive du serveur.
+
+- **Challenge 14 - NetTools (Diagnostic reseau) :**
+  - *Mise en situation :* L'equipe reseau utilise un outil interne permettant de verifier la joignabilite des hotes du systeme d'information.
+  - *Objectif d'audit :* Demontrer la possibilite de lire les donnees confidentielles hebergees sur le serveur d'execution.
 
 ---
 
