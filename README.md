@@ -6,6 +6,8 @@ Ce depot propose 14 challenges de type CTF concus pour des etudiants en cybersec
 
 ## Demarrage rapide
 
+### Sous Linux / macOS
+
 Le script `./ctf.sh` permet de gerer le telechargement du modele, le serveur LLM partage et le basculement d'un challenge a l'autre sans conflit de port.
 
 ```bash
@@ -16,17 +18,30 @@ chmod +x ctf.sh
 ./ctf.sh
 ```
 
+### Sous Windows
+
+Le projet fournit un lanceur natif `ctf.bat` (qui invoque PowerShell sans bloquer sur les politiques d'execution) :
+- **Via l'explorateur :** Double-cliquez directement sur `ctf.bat` a la racine du dossier.
+- **Via le terminal (Invite de commandes ou PowerShell) :**
+  ```cmd
+  .\ctf.bat
+  ```
+
+Le script controle automatiquement la presence de Docker Desktop et guide son installation si necessaire.
+
 ### Commandes directes
 
-- `./ctf.sh start <01-14>` : Coupe le challenge precedent, demarre le LLM si necessaire, et lance le challenge selectionne sur `http://localhost:8000`.
-- `./ctf.sh flag [<01-14>] [<flag>]` : Valide un flag trouve (directement pour le challenge actif ou en precisant le numero) et enregistre la progression.
-- `./ctf.sh score` : Affiche l'etat d'avancement et la liste des challenges resolus.
-- `./ctf.sh stop` : Arrete le challenge actif.
-- `./ctf.sh stop all` : Arrete l'ensemble des conteneurs (challenge et LLM).
-- `./ctf.sh model` : Configure le modele actif (Qwen 2.5 3B ou 1.5B).
-- `./ctf.sh download 3b` : Telecharge le modele 3B dans le repertoire `models/`.
-- `./ctf.sh test` : Envoie une requete de test au serveur LLM.
-- `./ctf.sh logs` : Affiche les journaux du challenge actif ou du LLM.
+Les memes sous-commandes sont disponibles sous Linux (`./ctf.sh <commande>`) et sous Windows (`.\ctf.bat <commande>`) :
+
+- `start <01-14>` : Coupe le challenge precedent, demarre le LLM si necessaire, et lance le challenge selectionne sur `http://localhost:8000`.
+- `flag [<01-14>] [<flag>]` : Valide un flag trouve (directement pour le challenge actif ou en precisant le numero) et enregistre la progression.
+- `score` : Affiche l'etat d'avancement et la liste des challenges resolus.
+- `stop` : Arrete le challenge actif.
+- `stop all` : Arrete l'ensemble des conteneurs (challenge et LLM).
+- `model` : Configure le modele actif (Qwen 2.5 3B ou 1.5B).
+- `download 3b` : Telecharge le modele 3B dans le repertoire `models/`.
+- `test` : Envoie une requete de test au serveur LLM.
+- `logs` : Affiche les journaux du challenge actif ou du LLM.
 
 ---
 
