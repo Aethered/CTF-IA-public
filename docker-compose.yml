@@ -29,7 +29,7 @@ services:
   # Challenges IA (avec LLM)
   # --------------------------------------------------
   challenge_01:
-    image: ghcr.io/aethered/ctf-ia/challenge_01:latest
+    image: ghcr.io/aethered/ctf-ia-public/challenge_01:latest
     container_name: ctf-ch-01
     ports:
       - "8000:8000"
@@ -39,7 +39,7 @@ services:
       - llm
 
   challenge_02:
-    image: ghcr.io/aethered/ctf-ia/challenge_02:latest
+    image: ghcr.io/aethered/ctf-ia-public/challenge_02:latest
     container_name: ctf-ch-02
     ports:
       - "8000:8000"
@@ -49,13 +49,13 @@ services:
       - llm
 
   challenge_03:
-    image: ghcr.io/aethered/ctf-ia/challenge_03:latest
+    image: ghcr.io/aethered/ctf-ia-public/challenge_03:latest
     container_name: ctf-ch-03
     ports:
       - "8000:8000"
 
   challenge_04:
-    image: ghcr.io/aethered/ctf-ia/challenge_04:latest
+    image: ghcr.io/aethered/ctf-ia-public/challenge_04:latest
     container_name: ctf-ch-04
     ports:
       - "8000:8000"
@@ -65,7 +65,7 @@ services:
       - llm
 
   challenge_05:
-    image: ghcr.io/aethered/ctf-ia/challenge_05:latest
+    image: ghcr.io/aethered/ctf-ia-public/challenge_05:latest
     container_name: ctf-ch-05
     ports:
       - "8000:8000"
@@ -75,13 +75,13 @@ services:
       - llm
 
   challenge_06:
-    image: ghcr.io/aethered/ctf-ia/challenge_06:latest
+    image: ghcr.io/aethered/ctf-ia-public/challenge_06:latest
     container_name: ctf-ch-06
     ports:
       - "8000:8000"
 
   challenge_07:
-    image: ghcr.io/aethered/ctf-ia/challenge_07:latest
+    image: ghcr.io/aethered/ctf-ia-public/challenge_07:latest
     container_name: ctf-ch-07
     ports:
       - "8000:8000"
@@ -91,7 +91,7 @@ services:
       - llm
 
   challenge_08:
-    image: ghcr.io/aethered/ctf-ia/challenge_08:latest
+    image: ghcr.io/aethered/ctf-ia-public/challenge_08:latest
     container_name: ctf-ch-08
     ports:
       - "8000:8000"
@@ -101,7 +101,7 @@ services:
       - llm
 
   challenge_09:
-    image: ghcr.io/aethered/ctf-ia/challenge_09:latest
+    image: ghcr.io/aethered/ctf-ia-public/challenge_09:latest
     container_name: ctf-ch-09
     ports:
       - "8000:8000"
@@ -114,31 +114,31 @@ services:
   # Challenges Web Classiques (sans LLM)
   # --------------------------------------------------
   challenge_10:
-    image: ghcr.io/aethered/ctf-ia/challenge_10:latest
+    image: ghcr.io/aethered/ctf-ia-public/challenge_10:latest
     container_name: ctf-ch-10
     ports:
       - "8000:8000"
 
   challenge_11:
-    image: ghcr.io/aethered/ctf-ia/challenge_11:latest
+    image: ghcr.io/aethered/ctf-ia-public/challenge_11:latest
     container_name: ctf-ch-11
     ports:
       - "8000:8000"
 
   challenge_12:
-    image: ghcr.io/aethered/ctf-ia/challenge_12:latest
+    image: ghcr.io/aethered/ctf-ia-public/challenge_12:latest
     container_name: ctf-ch-12
     ports:
       - "8000:8000"
 
   challenge_13:
-    image: ghcr.io/aethered/ctf-ia/challenge_13:latest
+    image: ghcr.io/aethered/ctf-ia-public/challenge_13:latest
     container_name: ctf-ch-13
     ports:
       - "8000:8000"
 
   challenge_14:
-    image: ghcr.io/aethered/ctf-ia/challenge_14:latest
+    image: ghcr.io/aethered/ctf-ia-public/challenge_14:latest
     container_name: ctf-ch-14
     ports:
       - "8000:8000"
