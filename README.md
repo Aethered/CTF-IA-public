@@ -10,6 +10,12 @@ Ce depot propose 14 challenges de type CTF concus pour des etudiants en cybersec
 
 Le script `./ctf.sh` permet de gerer le telechargement du modele, le serveur LLM partage et le basculement d'un challenge a l'autre sans conflit de port.
 
+> [!NOTE]
+> **Prerequis macOS :** macOS integre par defaut une ancienne version de Bash (3.2) incompatible avec les tableaux associatifs du script. Installez une version recente de Bash via Homebrew avant de lancer le script :
+> ```bash
+> brew install bash
+> ```
+
 ```bash
 # 1. Rendre le script executable
 chmod +x ctf.sh
